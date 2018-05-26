@@ -31,7 +31,6 @@ then
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
     sudo add-apt-repository -y ppa:marutter/rrutter
     sudo apt-get update
-    sudo apt-get upgrade
     sudo apt-get install libgmp3-dev
     sudo apt-get install gsl-bin
     sudo apt-get install libgsl2

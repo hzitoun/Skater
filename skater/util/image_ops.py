@@ -13,7 +13,7 @@ from skater.util.logger import build_logger
 from skater.util.logger import _INFO
 
 __all__ = ['add_noise', 'image_transformation', 'flip_pixels', 'normalize', 'show_image', 'greater_than', 'less_than',
-           'equal_to', 'greater_than_or_equal', 'less_than_equal', 'in_between']
+           'equal_to', 'greater_than_or_equal', 'less_than_equal', 'in_between', 'view_windows']
 
 
 logger = build_logger(_INFO, __name__)
@@ -164,3 +164,20 @@ def show_image(X, cmap=None, bins=None, title='Original'):
         fig.subplots_adjust(wspace=0.3)
     except ImportError:
         raise (MatplotlibUnavailableError("Matplotlib is required but unavailable on the system."))
+
+
+padding_3d = lambda X, n_r, n_col, n_c: np.pad(X, ((0, n_r), (0, n_col), (0, n_c)), mode='constant', constant_values=0)
+padding_2d = lambda X, n_r, n_col: np.pad(X, ((0, n_r), (0, n_col)), mode='constant', constant_values=0)
+
+
+def view_windows(X, window_shape, steps):
+    # Reference: https://codereview.stackexchange.com/questions/78156/moving-window-with-complete-boundary-in-python
+    from skimage.util.shape import view_as_windows
+    # number of rows to expand
+    n_rows = np.mod(X.shape[0], steps)
+    # number of columns to expand
+    n_cols = np.mod(X.shape[1], steps)
+    n_channel = np.mod(X.shape[2], steps) if len(window_shape) == 3 else None
+    X_extended = padding_3d(X, n_rows, n_cols, n_channel) if n_channel is not None else padding_2d(X, n_rows, n_cols)
+    rolling_view = view_as_windows(X_extended, window_shape, steps)
+    return rolling_view
