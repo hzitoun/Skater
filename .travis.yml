@@ -65,7 +65,7 @@ after_success:
 branches:
   only:
     - master
-    - compute_relevance_dev
+    - compute_relevance_dev2
 notifications:
   #slack:
   #secure:
