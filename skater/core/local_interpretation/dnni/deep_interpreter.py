@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
-from skater.core.local_interpretation.dnni.relevance_scorer import BaseGradient
-from skater.core.local_interpretation.dnni.relevance_scorer import LRP
-from skater.core.local_interpretation.dnni.relevance_scorer import IntegratedGradients
+from skater.core.local_interpretation.dnni.gradient_relevance_scorer import BaseGradientMethod
+from skater.core.local_interpretation.dnni.gradient_relevance_scorer import LRP
+from skater.core.local_interpretation.dnni.gradient_relevance_scorer import IntegratedGradients
+from skater.core.local_interpretation.dnni.perturbation_relevance_scorer import Occlusion
 from skater.core.local_interpretation.dnni.initializer import Initializer
 
 
@@ -22,7 +23,7 @@ def deep_interpreter_grad(op, grad):
     logger.debug("Computing gradient using DeepInterpretGrad")
     Initializer._grad_override_checkflag = 1
     if Initializer._enabled_method_class is not None \
-            and issubclass(Initializer._enabled_method_class, BaseGradient):
+            and issubclass(Initializer._enabled_method_class, BaseGradientMethod):
         logger.debug("Computing gradient using DeepInterpretGrad: {}".
                      format(Initializer._enabled_method_class._non_linear_grad))
         return Initializer._enabled_method_class._non_linear_grad(op, grad)
@@ -48,7 +49,7 @@ class DeepInterpreter(object):
 
     References
     ----------
-    .. [1] Ancona M, Ceolini E, Öztireli C, Gross M (ICLR, 2018).
+    .. [1] Ancona M, Ceolini E, Oztireli C, Gross M (ICLR, 2018).
            Towards better understanding of gradient-based attribution methods for Deep Neural Networks.
            https://arxiv.org/abs/1711.06104
            (https://github.com/marcoancona/DeepExplain/blob/master/deepexplain/tensorflow/methods.py)
@@ -72,7 +73,8 @@ class DeepInterpreter(object):
         self.context_on = False
         self.__supported_relevance_type_dict = OrderedDict({
             'elrp': {'use_case_type': ['image'], 'method': LRP},
-            'ig': {'use_case_type': ['image', 'txt'], 'method': IntegratedGradients}
+            'ig': {'use_case_type': ['image', 'txt'], 'method': IntegratedGradients},
+            'occlusion': {'use_case_type': ['image'], 'method': Occlusion}
         })
 
 
@@ -236,7 +238,7 @@ class DeepInterpreter(object):
         self.logger.info('DeepInterpreter: executing method {}'.format(method))
 
         result = method._run()
-        if issubclass(Initializer._enabled_method_class, BaseGradient) and Initializer._grad_override_checkflag == 0:
+        if issubclass(Initializer._enabled_method_class, BaseGradientMethod) and Initializer._grad_override_checkflag == 0:
             warnings.warn('Results may not reliable: As default gradient seems to have been used. '
                           'or you might have forgotten to create the graph within the DeepInterpreter context. '
                           'Be careful...')

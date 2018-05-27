@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
 
+import numpy as np
 from tensorflow.python.ops import nn_grad, math_grad
 import warnings
 from skater.util.logger import build_logger
 from skater.util.logger import _INFO
+
 
 
 class Initializer(object):
@@ -28,6 +30,15 @@ class Initializer(object):
         feed_dict = {}
         feed_dict[self.input_tensor] = samples
         return self.session.run(output_tensor, feed_dict)
+
+
+    def _validate_baseline(self):
+        if self.baseline is not None and self.baseline.shape != ((1,) + self.samples.shape[1:]):
+            if self.baseline.shape == self.samples.shape[1:]:
+                self.baseline = np.expand_dims(self.baseline, 0)
+            else:
+                raise RuntimeError('Baseline input shape {} does not match expected input shape {}'
+                                   .format(self.baseline.shape, self.samples.shape[1:]))
 
 
     @classmethod
