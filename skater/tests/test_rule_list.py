@@ -2,14 +2,15 @@ import pandas as pd
 import numpy as np
 import unittest
 import sys
+try:
+    if sys.version_info >= (3, 5):
+        from skater.core.global_interpretation.interpretable_models.brlc import BRLC
+        from skater.core.validation import compute_validation_curve
+except ImportError as err:
+    # Because of unresolved error related to ImportError: dlopen: cannot load any more object with static TLS(#229)
+    raise unittest.SkipTest(str(err))
 
-if sys.version_info >= (3, 5):
-    from skater.core.global_interpretation.interpretable_models.brlc \
-        import BRLC
-    from skater.core.validation import compute_validation_curve
 
-
-@unittest.skip("Because of unresolved error related to ImportError: dlopen: cannot load any more object with static TLS")
 # When in Dev mode, a consistent mode to validate test, that would keep track of weird segmentation fault is using gdb
 # (GNU Debugger). This is a temporary workaround. Follow the below mentioned steps
 # 1. sudo apt install gdb
