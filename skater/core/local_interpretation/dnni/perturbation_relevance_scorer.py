@@ -55,26 +55,48 @@ class Occlusion(BasePerturbationMethod):
         # the input samples are expected to be of the shape,
         # (1, 150, 150, 3) <batch_size, image_width, image_height, no_of_channels>
         self.batch_size = self.samples.shape[0]
-        self.total_dim = np.prod(self.input_shape)  # e.g. 268203 = 299*299*3
-        Occlusion.logger.info('Input shape: {}; window_shape: {}; replace value: {};'
-                              ' step: {}; batch size: {}; total dimensions: {}'.format
-                              (self.input_shape, self.window_shape, self.replace_value, self.step,
-                               self.batch_size, self.total_dim))
+        self.batch_size = self.samples.shape[0]
+        Occlusion.logger.info('Input shape: {}; window_size: {}; replace value: {}; batch size: {}'.
+                              format(self.input_shape, self.window_size, self.replace_value, self.batch_size))
+
+
+    def _create_masked_input(self, row_value, col_value):
+        masked_input = np.array(self.samples)
+        # mask the region as set by the window size by replacing the pixel values with the specified value(default:0)
+        masked_input[:, row_value:row_value + self.window_size, col_value:col_value + self.window_size, :] = self.replace_value
+        return masked_input
 
 
     def _run(self):
-        mask = np.array([self.window_size, self.window_size, self.samples.shape[2]])
+        mask = np.array([self.batch_size, self.window_size, self.window_size, self.samples[0].shape[2]])
         mask.fill(self.replace_value)
+        Occlusion.logger.info('Shape of the mask patch: {}'.format(mask.shape))
         relevance_score = np.zeros_like(self.samples, dtype=np.float32)
+        # normalizer matrix is set to 1 default; as matrix cell gets used atleast once
+        normalizer = np.ones_like(relevance_score)
 
         # Compute original output
         default_eval = self._session_run(self.output_tensor, self.samples)
+        Occlusion.logger.info("shape of the default eval value :{}".format(default_eval.shape))
 
-        for row in range(self.samples.shape[0] - self.window_size):
-            for col in range(self.samples.shape[1] - self.window_size):
-                masked_input = np.array(self.samples)
-                masked_input[row:(row + self.window_size), col:(col + self.window_size), :] = mask
+        count = 1  # to keep track of the number of times a matrix cell is used while perturbing through the feature space
+        # Perturb through the feature space by replacing and masking
+        for row in range(self.samples[0].shape[0] - self.window_size):
+            for col in range(self.samples[0].shape[1] - self.window_size):
+                # create masked input while rolling through the input matrix
+                new_input = self._create_masked_input(row, col)
+                # compute entropy when compared to the original eval value
+                delta = default_eval - self._session_run(self.output_tensor, new_input)
 
-                delta = default_eval - self._session_run(self.output_tensor, masked_input)
-                relevance_score[row:(row + self.window_size), col:(col + self.window_size), :] += delta
-        return relevance_score
+                delta_aggregated = np.sum(delta.reshape((self.batch_size, -1)), -1, keepdims=True)
+                relevance_score[:, row:row + self.window_size, col:col + self.window_size, :] += delta_aggregated
+                # keeping track of the number of time a matrix cell is used while perturbing feature space based
+                # on window size
+                normalizer[:, row:row + self.window_size, col:col + self.window_size, :] += count
+
+        Occlusion.logger.info("Maximum normalizer weight: {}".format(np.max(normalizer.shape)))
+        relevance_score_norm = relevance_score / normalizer
+        assert np.isnan(relevance_score_norm).any() is False, \
+            "Presence of nan in the resultant matrix, error in computing the relevance score"
+        Occlusion.logger.info("relevance score matrix shape :{}".format(relevance_score_norm.shape))
+        return relevance_score_norm
