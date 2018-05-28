@@ -46,7 +46,7 @@ class Occlusion(BasePerturbationMethod):
     __name__ = "Occlusion"
     logger = build_logger(_INFO, __name__)
 
-    def __init__(self, output_tensor, input_tensor, samples, current_session, window_shape=None, step=1):
+    def __init__(self, output_tensor, input_tensor, samples, current_session, window_shape=None, step=2):
         super(Occlusion, self).__init__(output_tensor, input_tensor, samples, current_session)
 
         self.input_shape = samples.shape[1:]
@@ -55,39 +55,51 @@ class Occlusion(BasePerturbationMethod):
                 'window_shape and input must match{}'.format(len(self.input_shape))
             self.window_shape = tuple(self.window_shape)
         else:
-            self.window_shape = (1,) * len(self.input_shape)
+            self.window_shape = (2,) * len(self.input_shape)
 
-        self.replace_value = 0.0
+        self.replace_value = 0
+        self.step = step
         # the input samples are expected to be of the shape,
         # (1, 150, 150, 3) <batch_size, image_width, image_height, no_of_channels>
         self.batch_size = self.samples.shape[0]
         self.total_dim = np.prod(self.input_shape)  # e.g. 268203 = 299*299*3
-        Occlusion.logger.info('Input shape: {}; window_shape {}; step {}'.format((self.input_shape,
-                                                                                  self.window_shape, self.step)))
+        Occlusion.logger.info('Input shape: {}; window_shape: {}; replace value: {};'
+                              ' step: {}; batch size: {}; total dimensions: {}'.format
+                              (self.input_shape, self.window_shape, self.replace_value, self.step,
+                               self.batch_size, self.total_dim))
 
 
-    def run(self):
-        self.__session_run()
+    def _create_masked_input(self, index_list):
+        # create a mask
+        mask = np.ones(self.input_shape, dtype=np.float32).flatten()
+        mask[index_list] = self.replace_value
+        # reshape the new input to the format <batch_size, image_width, image_height, no_of_channels>
+        new_input = mask.reshape((1,) + self.input_shape) * self.samples
+        return new_input
+
+
+    def _run(self):
         # Create a rolling window view of the input matrix
         # sample input is of the following shape (1, 150, 150, 3) <batch_size, image_width, image_height, no_of_channels>
         # self.samples[0] returns the actual input shape (150, 150, 3)
-        input_patches = view_windows(self.samples[0], self.window_shape, self.step).reshape((-1,) + self.window_shape)
+        index_matrix = np.arange(self.total_dim, dtype=np.int32).reshape(self.input_shape)
+        input_patches = view_windows(index_matrix, self.window_shape, self.step).reshape((-1,) + self.window_shape)
         heatmap = np.zeros_like(self.samples, dtype=np.float32).reshape((-1), self.total_dim)
         normalizer = np.zeros_like(heatmap)
 
         # Compute original output
-        eval0 = self._session_run()
+        eval_default = self._session_run(self.output_tensor, self.samples)
 
         # Perturb through the feature space by replacing and masking
         for item, index in enumerate(input_patches):
-            # create a mask
-            mask = np.ones(self.input_shape).flatten()
-            mask[index.flatten()] = self.replace_value
-            masked_input = mask.reshape((1,) + self.input_shape) * self.samples
-            delta = eval0 - self._run_input(masked_input)
-            delta_aggregated = np.sum(delta.reshape((self.batch_size, -1)), -1, keepdims=True)
-            heatmap[:, index.flatten()] += delta_aggregated
+            indexes = index.flatten()
+            masked_input = self._create_maked_input(indexes)
+            # compute delta with the new generated masked input
+            delta = eval_default - self._session_run(self.output_tensor, masked_input)
+            # aggregate columnwise
             # aggregation here takes care of the window overlapping that occurs while rolling a window
-            normalizer[:, index.flatten()] += index.size
+            delta_aggregated = np.sum(delta.reshape((self.batch_size, -1)), -1, keepdims=True)
+            heatmap[:, indexes] += delta_aggregated
+            normalizer[:, indexes] += index.size
         attribution = np.reshape(heatmap / normalizer, self.samples.shape)
         return attribution
