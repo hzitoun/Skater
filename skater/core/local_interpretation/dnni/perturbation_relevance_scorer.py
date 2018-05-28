@@ -96,7 +96,5 @@ class Occlusion(BasePerturbationMethod):
 
         Occlusion.logger.info("Maximum normalizer weight: {}".format(np.max(normalizer.shape)))
         relevance_score_norm = relevance_score / normalizer
-        assert np.isnan(relevance_score_norm).any() is False, \
-            "Presence of nan in the resultant matrix, error in computing the relevance score"
         Occlusion.logger.info("relevance score matrix shape :{}".format(relevance_score_norm.shape))
         return relevance_score_norm
