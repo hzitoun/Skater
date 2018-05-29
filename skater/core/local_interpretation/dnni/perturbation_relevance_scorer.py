@@ -46,15 +46,14 @@ class Occlusion(BasePerturbationMethod):
     __name__ = "Occlusion"
     logger = build_logger(_INFO, __name__)
 
-    def __init__(self, output_tensor, input_tensor, samples, current_session, window_size=2):
+    def __init__(self, output_tensor, input_tensor, samples, current_session, **kargs):
         super(Occlusion, self).__init__(output_tensor, input_tensor, samples, current_session)
 
         self.input_shape = samples.shape[1:]
-        self.replace_value = 0
-        self.window_size = window_size
+        self.replace_value = kargs if 'replace_value' in kargs.keys() else 0
+        self.window_size = kargs if 'window_size' in kargs.keys() else 2
         # the input samples are expected to be of the shape,
         # (1, 150, 150, 3) <batch_size, image_width, image_height, no_of_channels>
-        self.batch_size = self.samples.shape[0]
         self.batch_size = self.samples.shape[0]
         Occlusion.logger.info('Input shape: {}; window_size: {}; replace value: {}; batch size: {}'.
                               format(self.input_shape, self.window_size, self.replace_value, self.batch_size))
