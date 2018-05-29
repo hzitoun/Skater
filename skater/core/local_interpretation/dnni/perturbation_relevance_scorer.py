@@ -85,14 +85,15 @@ class Occlusion(BasePerturbationMethod):
             for col in range(0, self.samples[0].shape[1] - self.window_size, self.step):
                 # create masked input while rolling through the input matrix
                 new_input = self._create_masked_input(row, col)
+
                 # compute entropy when compared to the original eval value
                 delta = default_eval - self._session_run(self.output_tensor, new_input)
-
                 delta_aggregated = np.sum(delta.reshape((self.batch_size, -1)), -1, keepdims=True)
-                relevance_score[:, row:row + self.window_size, col:col + self.window_size, :] += delta_aggregated
+                relevance_score[:, row:(row + self.window_size), col:(col + self.window_size), :] += delta_aggregated
+
                 # keeping track of the number of time a matrix cell is used while perturbing feature space based
                 # on window size
-                normalizer[:, row:row + self.window_size, col:col + self.window_size, :] += (count - 1)
+                normalizer[:, row:(row + self.window_size), col:(col + self.window_size), :] += (count - 1)
 
         Occlusion.logger.info("Min/Max normalizer weight: {}".format(np.min(normalizer.shape),
                                                                      np.max(normalizer.shape)))

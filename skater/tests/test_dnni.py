@@ -95,16 +95,13 @@ class TestDNNI(unittest.TestCase):
 
             relevance_scores_elrp = di.explain('elrp', target_tensor * ys, input_tensor, xs, use_case='image')
             relevance_scores_ig = di.explain('ig', target_tensor * ys, input_tensor, xs, use_case='image')
-            relevance_scores_occ = di.explain('occlusion', target_tensor * ys, input_tensor, xs, use_case='image')
             # test for optional arguments related to window_size and step size for 'occlusion'
-            optional_args = {"window_size": 2,
-                             "step": 2}
-            relevance_scores_occ_2 = di.explain('occlusion', target_tensor * ys, input_tensor, xs,
+            optional_args = {"window_size": 2, "step": 2}
+            relevance_scores_occ = di.explain('occlusion', target_tensor * ys, input_tensor, xs,
                                                 use_case='image', **optional_args)
         self.assertEquals(relevance_scores_elrp.shape, (2, 28, 28, 1))
         self.assertEquals(relevance_scores_ig.shape, (2, 28, 28, 1))
         self.assertEquals(relevance_scores_occ.shape, (2, 28, 28, 1))
-        self.assertEquals(relevance_scores_occ_2.shape, (2, 28, 28, 1))
 
 
 if __name__ == '__main__':
