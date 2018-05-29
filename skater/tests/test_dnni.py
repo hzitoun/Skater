@@ -100,7 +100,7 @@ class TestDNNI(unittest.TestCase):
             optional_args = {"window_size": 2,
                              "step": 2}
             relevance_scores_occ_2 = di.explain('occlusion', target_tensor * ys, input_tensor, xs,
-                                                use_case='image' ** optional_args)
+                                                use_case='image', **optional_args)
         self.assertEquals(relevance_scores_elrp.shape, (2, 28, 28, 1))
         self.assertEquals(relevance_scores_ig.shape, (2, 28, 28, 1))
         self.assertEquals(relevance_scores_occ.shape, (2, 28, 28, 1))
