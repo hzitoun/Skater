@@ -73,7 +73,7 @@ class Occlusion(BasePerturbationMethod):
         Occlusion.logger.info('Shape of the mask patch: {}'.format(mask.shape))
         relevance_score = np.zeros_like(self.samples, dtype=np.float32)
         # normalizer matrix is set to 1 default; as matrix cell gets used atleast once
-        normalizer = np.zeros_like(relevance_score)
+        normalizer = np.ones_like(relevance_score)
 
         # Compute original output
         default_eval = self._session_run(self.output_tensor, self.samples)
@@ -92,7 +92,7 @@ class Occlusion(BasePerturbationMethod):
                 relevance_score[:, row:row + self.window_size, col:col + self.window_size, :] += delta_aggregated
                 # keeping track of the number of time a matrix cell is used while perturbing feature space based
                 # on window size
-                normalizer[:, row:row + self.window_size, col:col + self.window_size, :] += count
+                normalizer[:, row:row + self.window_size, col:col + self.window_size, :] += (count - 1)
 
         Occlusion.logger.info("Min/Max normalizer weight: {}".format(np.min(normalizer.shape),
                                                                      np.max(normalizer.shape)))
