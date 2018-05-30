@@ -63,7 +63,7 @@ class Occlusion(BasePerturbationMethod):
     def _create_masked_input(self, row_value, col_value):
         masked_input = np.array(self.samples)
         # mask the region as set by the window size by replacing the pixel values with the specified value(default:0)
-        masked_input[:, row_value:row_value + self.window_size, col_value:col_value + self.window_size, :] = self.replace_value
+        masked_input[:, row_value:(row_value + self.window_size), col_value:(col_value + self.window_size), :] = self.replace_value
         return masked_input
 
 
@@ -95,7 +95,7 @@ class Occlusion(BasePerturbationMethod):
                 # on window size
                 normalizer[:, row:(row + self.window_size), col:(col + self.window_size), :] += (count - 1)
 
-        Occlusion.logger.info("Min/Max normalizer weight: {}".format(np.min(normalizer.shape),
+        Occlusion.logger.info("Min/Max normalizer weight: {}/{}".format(np.min(normalizer.shape),
                                                                      np.max(normalizer.shape)))
         relevance_score_norm = relevance_score / normalizer
         Occlusion.logger.info("relevance score matrix shape :{}".format(relevance_score_norm.shape))
