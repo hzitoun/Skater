@@ -96,7 +96,7 @@ class Occlusion(BasePerturbationMethod):
                 normalizer[:, row:(row + self.window_size), col:(col + self.window_size), :] += (count - 1)
 
         Occlusion.logger.info("Min/Max normalizer weight: {}/{}".format(np.min(normalizer.shape),
-                                                                     np.max(normalizer.shape)))
+                                                                        np.max(normalizer.shape)))
         relevance_score_norm = relevance_score / normalizer
         Occlusion.logger.info("relevance score matrix shape :{}".format(relevance_score_norm.shape))
         return relevance_score_norm
