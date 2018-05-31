@@ -104,7 +104,7 @@ class IntegratedGradients(BaseGradientMethod):
     def __init__(self, output_tensor, input_tensor, samples, session, steps=100, baseline=None):
         super(IntegratedGradients, self).__init__(output_tensor, input_tensor, samples, session)
         self.steps = steps
-        self.baseline = baseline
+        self.baseline = self._validate_baseline(baseline)
         # validate baseline, if baseline == None, _validate_baseline assigns the default baseline
         # black image or zero embedding vector for text is used as a default baseline, as suggested in the paper
         # Mukund Sundararajan, Ankir Taly, Qibi Yan. Axiomatic Attribution for Deep Networks(ICML2017)
