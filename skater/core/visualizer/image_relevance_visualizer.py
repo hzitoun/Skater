@@ -39,7 +39,7 @@ def visualize(relevance_score, original_input_img=None, edge_detector_type='sobe
     # Plot the image with relevance scores
     axis.imshow(relevance_score, extent=extent, interpolation='nearest', cmap=cmap,
                 vmin=-abs_min, vmax=abs_max, alpha=alpha_bgcolor)
-    _enable_axis(disable_axis)
+    _enable_axis(axis, disable_axis)
     return axis
 
 
