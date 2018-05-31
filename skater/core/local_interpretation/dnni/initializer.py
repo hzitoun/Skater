@@ -32,13 +32,16 @@ class Initializer(object):
         return self.session.run(output_tensor, feed_dict)
 
 
-    def _validate_baseline(self):
-        if self.baseline is not None and self.baseline.shape != ((1,) + self.samples.shape[1:]):
-            if self.baseline.shape == self.samples.shape[1:]:
-                self.baseline = np.expand_dims(self.baseline, 0)
+    def _validate_baseline(self, baseline):
+        if baseline is not None and baseline.shape != ((1,) + self.samples.shape[1:]):
+            if baseline.shape == self.samples.shape[1:]:
+                baseline = np.expand_dims(baseline, 0)
             else:
                 raise RuntimeError('Baseline input shape {} does not match expected input shape {}'
-                                   .format(self.baseline.shape, self.samples.shape[1:]))
+                                   .format(baseline.shape, self.samples.shape[1:]))
+        elif baseline is None:
+            baseline = np.zeros((1,) + self.samples.shape[1:])
+        return baseline
 
 
     @classmethod

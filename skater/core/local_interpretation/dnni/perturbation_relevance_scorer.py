@@ -1,14 +1,7 @@
 # -*- coding: UTF-8 -*-
-from skater.util.image_ops import view_windows
 from skater.core.local_interpretation.dnni.initializer import Initializer
 from skater.util.logger import build_logger
 from skater.util.logger import _INFO
-from skater.util.exceptions import TensorflowUnavailableError
-try:
-    import tensorflow as tf
-except ImportError:
-    raise (TensorflowUnavailableError("TensorFlow binaries are not installed"))
-
 import numpy as np
 
 
