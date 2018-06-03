@@ -24,7 +24,7 @@ class Occlusion(BasePerturbationMethod):
     portions of the image (by removing, masking or altering them), then running a forward pass on the new input to
     produce a new output, and then measuring and monitoring the difference between the original output and new output.
     Perturbation based interpretation helps one to compute direct estimation of the marginal effect of a feature but
-    the inferrence might be computationally expensive depending on the cardinatlity of the feature space.
+    the inference might be computationally expensive depending on the cardinatlity of the feature space.
     The choice of the baseline value while perturbing through the feature space could be set to 0,
     as explained in detail by Zeiler & Fergus, 2014[2].
 

@@ -40,6 +40,8 @@ install:
       python -m pip install --upgrade --force-reinstall tensorflow==1.4.0;
       python -W ignore -c "import tensorflow as tf";
     else
+      sudo apt-get install libtcmalloc-minimal4
+      export LD_PRELOAD="/usr/lib/libtcmalloc_minimal.so.4"
       python -m pip install --upgrade --force-reinstall tensorflow==1.4.0;
       python -W ignore -c "import tensorflow as tf";
     fi
