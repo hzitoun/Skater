@@ -19,7 +19,8 @@ __all__ = ['add_noise', 'image_transformation', 'flip_pixels', 'normalize', 'sho
 logger = build_logger(_INFO, __name__)
 
 
-def load_image(path, img_height, img_width):
+def load_image(path, img_height, img_width, crop_from_center=True, mode='constant',
+               preserve_range=False, anti_aliasing=None, anti_aliasing_sigma=None):
     # load image
     img = skimage.io.imread(path)
     img = img / 255.0
@@ -31,8 +32,11 @@ def load_image(path, img_height, img_width):
     xx = int((img.shape[1] - short_edge) / 2)
     crop_img = img[yy: yy + short_edge, xx: xx + short_edge]
 
+    in_img = crop_img if crop_from_center is True else img
+
     # Re-size the image to required dimension
-    resized_img = skimage.transform.resize(crop_img, (img_width, img_height))
+    resized_img = skimage.transform.resize(in_img, (img_height, img_width), mode=mode,
+                                           preserve_range=False, anti_aliasing=None, anti_aliasing_sigma=None)
     return resized_img
 
 

@@ -3,12 +3,20 @@ import numpy as np
 from skimage.util.shape import view_as_windows
 
 from skater.util.image_ops import view_windows
+from skater.util.image_ops import load_image
 
 
 class TestImageOps(unittest.TestCase):
 
     def setUp(self):
         pass
+
+
+    def test_loading_imgs(self):
+        img = load_image('../examples/image_interpretability/data/images/pandas.jpg', 299, 299)
+        self.assertEquals(img.shape, (299, 299))
+        img = load_image('../examples/image_interpretability/data/images/pandas.jpg', 200, 299)
+        self.assertEquals(img.shape, (200, 299))
 
 
     def test_view_windows(self):
