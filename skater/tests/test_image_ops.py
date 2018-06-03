@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 from skimage.util.shape import view_as_windows
-from keras.datasets import mnist
 
 from skater.util.image_ops import view_windows
 from skater.util.image_ops import load_image
