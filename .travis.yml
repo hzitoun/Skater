@@ -27,6 +27,7 @@ before_install:
   - conda install gxx_linux-64
 
 install:
+  # https://github.com/tensorflow/tensorflow/issues/6968 (reason for including libtcmalloc-minimal4)
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy cython scipy matplotlib h5py flake8 coverage
   - source activate test-environment
   - pip install codecov # not on conda
