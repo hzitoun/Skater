@@ -135,7 +135,7 @@ def divide_zerosafe(a, b):
     return c
 
 
-# Lamda for converting data-frame to a dictionary
+# Lambda for converting data-frame to a dictionary
 convert_dataframe_to_dict = lambda key_column_name, value_column_name, df: \
     df.set_index(key_column_name).to_dict()[value_column_name]
 
