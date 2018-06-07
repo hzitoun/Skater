@@ -11,4 +11,6 @@ __all__ = [
     'ControlledDict',
     'pickle_method',
     'unpickle_method',
-    'plot_from_df']
+    'plot_from_df',
+    'show_in_notebook',
+    'json_validator']
