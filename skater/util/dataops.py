@@ -1,6 +1,10 @@
 from __future__ import division
 import numpy as np
 from sklearn.preprocessing import LabelBinarizer
+from skater.util.logger import build_logger
+from skater.util.logger import _INFO
+
+logger = build_logger(_INFO, __name__)
 
 
 def flatten(array):
@@ -136,9 +140,6 @@ convert_dataframe_to_dict = lambda key_column_name, value_column_name, df: \
     df.set_index(key_column_name).to_dict()[value_column_name]
 
 
-
-
-
 def json_validator(json_object):
     """ json validator
     """
@@ -149,3 +150,35 @@ def json_validator(json_object):
     except ValueError:
         return False
     return True
+
+
+def _render_html(file_name):
+    from IPython.core.display import HTML
+    return HTML(file_name)
+
+
+def _render_image(file_name):
+    from IPython.display import Image
+    return Image(file_name)
+
+
+def show_in_notebook(file_name_with_type='rendered.html'):
+    """ Display generated artifacts(e.g. .png, .html, .jpeg/.jpg) in interactive Jupyter style Notebook
+
+    Parameters
+    -----------
+    file_name_with_type: str
+        specify the name of the file to display
+
+    """
+    from IPython.core.display import display
+    file_type = file_name_with_type.split('/')[-1].split('.')[-1]
+    choice_dict = {
+        'html': _render_html,
+        'png': _render_image,
+        'jpeg': _render_image,
+        'jpg': _render_image
+    }
+    select_type = lambda choice_type: choice_dict[file_type]
+    logger.info("File Name: {}".format(file_name_with_type))
+    return display(select_type(file_type)(file_name_with_type))

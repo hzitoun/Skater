@@ -221,35 +221,3 @@ def plot_feature_relevance(feature_relevance_scores, **plot_kw):
     plt.savefig(f_name)
     logger.info("Rank order feature relevance based on input created and saved as {}".format(f_name))
     return f_name
-
-
-def _render_html(file_name):
-    from IPython.core.display import HTML
-    return HTML(file_name)
-
-
-def _render_image(file_name):
-    from IPython.display import Image
-    return Image(file_name)
-
-
-def show_in_notebook(file_name_with_type='rendered.html'):
-    """ Display generated artifacts(e.g. .png, .html, .jpeg/.jpg) in interactive Jupyter style Notebook
-
-    Parameters
-    -----------
-    file_name_with_type: str
-        specify the name of the file to display
-
-    """
-    from IPython.core.display import display
-    file_type = file_name_with_type.split('/')[-1].split('.')[-1]
-    choice_dict = {
-        'html': _render_html,
-        'png': _render_image,
-        'jpeg': _render_image,
-        'jpg': _render_image
-    }
-    select_type = lambda choice_type: choice_dict[file_type]
-    logger.info("File Name: {}".format(file_name_with_type))
-    return display(select_type(file_type)(file_name_with_type))

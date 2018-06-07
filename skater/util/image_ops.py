@@ -19,7 +19,7 @@ __all__ = ['add_noise', 'image_transformation', 'flip_pixels', 'normalize', 'sho
 logger = build_logger(_INFO, __name__)
 
 
-def load_image(path, img_height, img_width, crop_from_center=True, mode='constant',
+def load_image(path, img_height, img_width, crop_from_center=True, rgb2bgr=False, mode='constant',
                preserve_range=False, anti_aliasing=None, anti_aliasing_sigma=None):
     # load image
     img = skimage.io.imread(path)
@@ -34,6 +34,8 @@ def load_image(path, img_height, img_width, crop_from_center=True, mode='constan
 
     in_img = crop_img if crop_from_center is True else img
 
+    # If RGB --> BGR flag is enabled
+    in_img = in_img[:, :, ::-1] if rgb2bgr else in_img
     # Re-size the image to required dimension
     resized_img = skimage.transform.resize(in_img, (img_height, img_width), mode=mode,
                                            preserve_range=False, anti_aliasing=None, anti_aliasing_sigma=None)
