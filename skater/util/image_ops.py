@@ -19,8 +19,11 @@ __all__ = ['add_noise', 'image_transformation', 'flip_pixels', 'normalize', 'sho
 logger = build_logger(_INFO, __name__)
 
 
-def load_image(path, img_height, img_width, crop_from_center=True, rgb2bgr=False, mode='constant',
+def load_image(path, img_height=None, img_width=None, crop_from_center=True, rgb2bgr=False, mode='constant',
                preserve_range=False, anti_aliasing=None, anti_aliasing_sigma=None):
+    assert img_height is not None, 'specify image height'
+    assert img_width is not None, 'specify image width'
+
     # load image
     img = skimage.io.imread(path)
     img = img / 255.0
