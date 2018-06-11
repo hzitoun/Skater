@@ -152,7 +152,7 @@ def normalize(X):
     """
     if not isinstance(X, np.ndarray):
         err_msg = "Input array should be numpy.ndarray"
-    raise(DataSetError(err_msg))
+        raise(DataSetError(err_msg))
 
     return np.array((X - np.min(X)) / (np.max(X) - np.min(X)))
 
