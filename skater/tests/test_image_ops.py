@@ -4,6 +4,9 @@ from skimage.util.shape import view_as_windows
 
 from skater.util.image_ops import view_windows
 from skater.util.image_ops import load_image
+from skater.util.image_ops import standard_scaler
+from skater.util.image_ops import normalize
+
 
 
 class TestImageOps(unittest.TestCase):
@@ -26,6 +29,18 @@ class TestImageOps(unittest.TestCase):
         # apply rolling window with padding to handle corner cases
         input_view_modified = view_windows(padded_input, (4, 4), 4)
         self.assertEquals(input_view.shape, input_view_modified.shape)
+
+
+    def test_standard_scaler(self):
+        x = np.asarray([1, 4, 5, 6, 6, 2, 3])
+        x_new = standard_scaler(x)
+        self.assertEquals(round(x_new.std(), 1), 1)
+
+
+    def test_normalization(self):
+        x = np.asarray([1, 4, 5, 6, 6, 2, 3])
+        x_new = normalize(x)
+        self.assertEquals((np.min(x_new), np.max(x_new)), (0, 1))
 
 
 if __name__ == '__main__':
