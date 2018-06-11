@@ -21,6 +21,9 @@ The project was started as a research idea to find ways to enable better interpr
 
 .. image:: https://coveralls.io/repos/github/datascienceinc/Skater/badge.svg?branch=master
     :target: https://coveralls.io/github/datascienceinc/Skater?branch=master
+  
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+    :target: https://github.com/datascienceinc/Skater/blob/master/LICENSE
     
     
 HighLevel Design 
@@ -123,6 +126,8 @@ Algorithms
 | Local Interpretation    | DNNs      | - `Layer-wise Relevance Propagation <https://tinyurl.com/e-layerwise>`_         |
 |                         |           |   (e-LRP): image                                                                |
 |                         |           |                                                                                 |
+|                         |           | - `Occlusion  <https://tinyurl.com/dnn-occlusion>`_ : image                     |
+|                         |           |                                                                                 |
 |                         |           | - `Integrated Gradient <https://tinyurl.com/integrated-gradient>`_              |
 |                         |           |   image and text                                                                |
 +---------+---------+-----+-----------+-----------------------------------------+--------------------+------------------+
@@ -161,3 +166,4 @@ Books and blogs
 1. `Interpreting predictive models with Skater: Unboxing model opacity <https://www.oreilly.com/ideas/interpreting-predictive-models-with-skater-unboxing-model-opacity>`_
 2. Molnar Christoph, `Interpretable Machine Learning <https://christophm.github.io/interpretable-ml-book/>`_
 3. Sarkar Dipanjan et al., `Practical Machine Learning with Python <https://github.com/dipanjanS/practical-machine-learning-with-python>`_
+4. O'Reilly article(part1) - `Interpreting predictive models with Skater: Unboxing model opacity <https://www.oreilly.com/ideas/interpreting-predictive-models-with-skater-unboxing-model-opacity>`_

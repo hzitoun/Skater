@@ -127,21 +127,14 @@ particular class label.
 
 DNNs: Layerwise Relevance Propagation(e-LRP)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: skater.core.local_interpretation.dnni.gradient_relevance_scorer.LRP
+.. autoclass:: skater.core.local_interpretation.dnni.relevance_scorer.LRP
    :no-members:
    :no-inherited-members:
 
 
 DNNs: Integrated Gradient
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: skater.core.local_interpretation.dnni.gradient_relevance_scorer.IntegratedGradients
-   :no-members:
-   :no-inherited-members:
-
-
-DNNs: Occlusion
-~~~~~~~~~~~~~~~
-.. autoclass:: skater.core.local_interpretation.dnni.perturbation_relevance_scorer.Occlusion
+.. autoclass:: skater.core.local_interpretation.dnni.relevance_scorer.IntegratedGradients
    :no-members:
    :no-inherited-members:
 

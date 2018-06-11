@@ -8,7 +8,6 @@ from skater.util.image_ops import standard_scaler
 from skater.util.image_ops import normalize
 
 
-
 class TestImageOps(unittest.TestCase):
 
     def setUp(self):
