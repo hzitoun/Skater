@@ -22,7 +22,7 @@ logger = build_logger(_INFO, __name__)
 
 def load_image(path, img_height=None, img_width=None, crop_from_center=True, rgb2bgr=False, mode='constant',
                preserve_range=True, anti_aliasing=None, anti_aliasing_sigma=None):
-    if img_height or img_width is None:
+    if not img_height or img_width is None:
         raise AssertionError("Dimensions for the image size is not specified as reqiured. Either image height or "
                              "image weight is missing ")
 
