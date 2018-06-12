@@ -11,48 +11,6 @@ def flatten(array):
     return [item for sublist in array for item in sublist]
 
 
-class MultiColumnLabelBinarizer(LabelBinarizer):
-    def __init__(self, neg_label=0, pos_label=1, sparse_output=False):
-        self.neg_label = neg_label
-        self.pos_label = pos_label
-        self.sparse_output = sparse_output
-        self.binarizers = []
-
-
-    def fit(self, X):
-        for x in X.T:
-            binarizer = LabelBinarizer()
-            binarizer.fit(x)
-            self.binarizers.append(binarizer)
-
-
-    def transform(self, X):
-        results = []
-        for i, x in enumerate(X.T):
-            results.append(self.binarizers[i].transform(x))
-        return np.concatenate(results, axis=1)
-
-
-    def fit_transform(self, X):
-        self.fit(X)
-        return self.transform(X)
-
-
-    def inverse_transform(self, X):
-        results = []
-        column_counter = 0
-
-        for i, binarizer in enumerate(self.binarizers):
-            n_cols = binarizer.classes_.shape[0]
-            x_subset = X[:, column_counter:column_counter + n_cols]
-            inv = binarizer.inverse_transform(x_subset)
-            if len(inv.shape) == 1:
-                inv = inv[:, np.newaxis]
-            results.append(inv)
-            column_counter += n_cols
-        return np.concatenate(results, axis=1)
-
-
 def add_column_numpy_array(array, new_col):
     placeholder = np.ones(array.shape[0])[:, np.newaxis]
     result = np.hstack((array, placeholder))
@@ -182,3 +140,45 @@ def show_in_notebook(file_name_with_type='rendered.html'):
     select_type = lambda choice_type: choice_dict[file_type]
     logger.info("File Name: {}".format(file_name_with_type))
     return display(select_type(file_type)(file_name_with_type))
+
+
+class MultiColumnLabelBinarizer(LabelBinarizer):
+    def __init__(self, neg_label=0, pos_label=1, sparse_output=False):
+        self.neg_label = neg_label
+        self.pos_label = pos_label
+        self.sparse_output = sparse_output
+        self.binarizers = []
+
+
+    def fit(self, X):
+        for x in X.T:
+            binarizer = LabelBinarizer()
+            binarizer.fit(x)
+            self.binarizers.append(binarizer)
+
+
+    def transform(self, X):
+        results = []
+        for i, x in enumerate(X.T):
+            results.append(self.binarizers[i].transform(x))
+        return np.concatenate(results, axis=1)
+
+
+    def fit_transform(self, X):
+        self.fit(X)
+        return self.transform(X)
+
+
+    def inverse_transform(self, X):
+        results = []
+        column_counter = 0
+
+        for i, binarizer in enumerate(self.binarizers):
+            n_cols = binarizer.classes_.shape[0]
+            x_subset = X[:, column_counter:column_counter + n_cols]
+            inv = binarizer.inverse_transform(x_subset)
+            if len(inv.shape) == 1:
+                inv = inv[:, np.newaxis]
+            results.append(inv)
+            column_counter += n_cols
+        return np.concatenate(results, axis=1)
