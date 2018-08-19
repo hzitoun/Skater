@@ -25,13 +25,12 @@ before_install:
   # Useful for debugging any issues with conda
   - conda info -a
   - conda install gxx_linux-64
-  - conda install libgcc
-  - export LD_LIBRARY_PATH=${prefix}/lib:$LD_LIBRARY_PATH
 
 install:
   # https://github.com/tensorflow/tensorflow/issues/6968 (reason for including libtcmalloc-minimal4)
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy cython scipy matplotlib h5py flake8 coverage
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy cython scipy h5py flake8 coverage
   - source activate test-environment
+  - conda install -c conda-forge matplotlib
   - pip install codecov # not on conda
   - pip install coveralls
   - if [[ "$TRAVIS_PYTHON_VERSION" > "3.0" ]]; then
